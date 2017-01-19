@@ -11,12 +11,14 @@ const client = new cassandra.Client({ contactPoints: ['127.0.0.1:9042'], keyspac
 app.use(bodyParser());
 
 
-app.get('/', function(req, res){
-    console.log('GET /')
-    //var html = '<html><body><form method="post" action="http://localhost:3000">Name: <input type="text" name="name" /><input type="submit" value="Submit" /></form></body>';
-    var html = fs.readFileSync('index.html');
+app.get('/score', function(req, res){
+    console.log('GET /');
+    var top = req.query.top;
+    if(top==10){
+     		
+    }		
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end(html);
+    res.end("Successful");
 });
 
 app.post('/data', function(req, res){	
@@ -27,17 +29,19 @@ app.post('/data', function(req, res){
  	 console.log(err);
   
 	});
+    console.log('POST /data');
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end('Successful');
 });
 
 app.post('/score', function(req, res){   
-        var query = 'INSERT INTO score (key,value) VALUES (?,?)';
-        var params = [req.body.deviceid,req.body.score];       
+        var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
+        var params = [req.body.deviceid,req.body.username,req.body.score];       
         client.execute(query, params, { prepare: true }, function (err) {
          console.log(err);
   
         });
+    console.log('POST /data');
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end('Sucessful');
 });
