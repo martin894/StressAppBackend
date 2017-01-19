@@ -10,12 +10,23 @@ const client = new cassandra.Client({ contactPoints: ['127.0.0.1:9042'], keyspac
         });     
 app.use(bodyParser());
 
+function sortNumber(a,b) {
+    return a - b;
+}
+
+
 
 app.get('/score', function(req, res){
     console.log('GET /');
     var top = req.query.top;
     if(top==10){
-     		
+        const query = 'SELECT user,value FROM score';
+        client.execute(query, function (err, result) {
+            var score = result.sort(sortNumber);
+
+
+        });
+
     }		
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end("Successful");
@@ -23,8 +34,8 @@ app.get('/score', function(req, res){
 
 app.post('/data', function(req, res){	
 	var key = uuid.v4();
-	var query = 'INSERT INTO events (key,deviceid,value) VALUES (?,?,?)';
-	var params = [key,req.body.deviceid,req.body.data];	
+	var query = 'INSERT INTO events JSON VALUES (?)';
+	var params = [req.body.data];
 	client.execute(query, params, { prepare: true }, function (err) {
  	 console.log(err);
   
