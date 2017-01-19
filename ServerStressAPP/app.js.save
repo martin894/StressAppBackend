@@ -1,0 +1,36 @@
+var express = require('express');
+var fs = require('fs');
+var app = express();
+var uuid = require('node-uuid');
+const cassandra = require('cassandra-driver');
+ const client = new cassandra.Client({ contactPoints: ['127.0.0.1:9042'], keyspace: 'eventskeyspace' });
+                client.connect(function (err) {
+                console.log(err);
+});
+app.get('/', function(req, res){
+    console.log('GET /')
+    //var html = '<html><body><form method="post" action="http://localhost:3000">Name: <input type="text" name="name" /><input type="submit" value="Submit" /></form></body>';
+    var html = fs.readFileSync('index.html');
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end(html);
+});
+
+app.post('/data', function(req, res){
+	const client = new cassandra.Client({ contactPoints: ['127.0.0.1:9042'], keyspace: 'eventskeyspace' });
+		client.connect(function (err) {
+  		console.log(err);
+	})
+	
+	var key = uuid.v4();
+	var query = 'INSERT INTO events (key,value) VALUES (:key, :value)';
+	var params = [key:key,value:req.body];	
+	client.execute(query, params, { prepare: true }, function (err) {
+ 	 console.log(err);
+  
+	});
+    console.log('POST /data');
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end('Sucessful');
+});
+
+app.listen(3000);
