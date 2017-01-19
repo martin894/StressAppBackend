@@ -34,7 +34,7 @@ app.get('/score', function(req, res){
 
 app.post('/data', function(req, res){	
 	var key = uuid.v4();
-	var query = 'INSERT INTO events JSON (?)';
+	var query = 'INSERT INTO events JSON ?';
 	console.log(req.body.data);
 	var params = [req.body.data];
 	client.execute(query, params, { prepare: true }, function (err) {
