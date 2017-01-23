@@ -19,23 +19,22 @@ function sortNumber(a,b) {
 app.get('/score', function(req, res){
     console.log('GET /');
     var top = req.query.top;
+    var score = [];
     if(top==10){
         const query = 'SELECT user,value FROM score';
         client.execute(query, function (err, result) {
-            var score = result.sort(sortNumber);
-
-
+            score = result.sort(sortNumber).slice(0,9);
         });
-
-    }		
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end("Successful");
+        res.send(score);
+        console.log('Data send');
+    } else {
+        res.send(score);
+    }
 });
 
 app.post('/data', function(req, res){	
 	var key = uuid.v4();
 	var query = 'INSERT INTO events JSON ?';
-	console.log(req.body.data);
 	var params = [req.body.data];
 	client.execute(query, params, { prepare: true }, function (err) {
  	 console.log(err);
@@ -46,16 +45,25 @@ app.post('/data', function(req, res){
     res.end('Successful');
 });
 
-app.post('/score', function(req, res){   
-        var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
-        var params = [req.body.deviceid,req.body.username,req.body.score];       
-        client.execute(query, params, { prepare: true }, function (err) {
-         console.log(err);
-  
-        });
-    console.log('POST /data');
+app.post('/score', function(req, res){
+        var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
+        client.execute(query, [req.body.deviceid], function (err, result) {
+            console.log(result);
+            // if (!result.isEmpty()){
+            //     if(req.body.score>result)
+            // } else {
+            //     var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
+            //     var params = [req.body.deviceid,req.body.username,req.body.score];
+            //     client.execute(query, params, { prepare: true }, function (err) {
+            //         console.log(err);
+            //
+            //     });
+            // }
+         });
+
+    console.log('POST /score');
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('Sucessful');
+    res.end('Successful');
 });
 
 
