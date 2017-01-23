@@ -61,7 +61,7 @@ app.post('/score', function(req, res){
             //     });
             // }
          });
-        if (res ==="undefined"){
+        if (res===null){
             var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
             var params = [req.body.deviceid,req.body.username,req.body.score];
             client.execute(query, params, { prepare: true }, function (err) {
