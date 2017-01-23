@@ -25,6 +25,10 @@ app.get('/score', function(req, res){
         client.execute(query, function (err, result) {
             score = result.sort(sortNumber).slice(0,9);
         });
+        var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
+        client.execute(searchQuery, [req.query.deviceid], function (err, result) {
+           score.push(result[2]);
+        });
         res.send(score);
         console.log('Data send');
     } else {
