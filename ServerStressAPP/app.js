@@ -49,6 +49,7 @@ app.post('/score', function(req, res){
         var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
         var res;
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
+            console.log(res);
             res = result;
          });
         if (!res){
