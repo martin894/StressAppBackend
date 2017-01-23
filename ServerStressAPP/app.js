@@ -47,13 +47,13 @@ app.post('/data', function(req, res){
 
 app.post('/score', function(req, res){
         var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
-        var r;
+        var r = null;
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
             r = result;
             console.log(r);
 
     });
-        if (!r){
+        if (r===null){
             console.log("new");
             var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
             var params = [req.body.deviceid,req.body.username,req.body.value];
