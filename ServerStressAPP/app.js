@@ -53,7 +53,7 @@ app.post('/score', function(req, res){
             console.log(r);
 
     });
-        if (r===null){
+        if (r===null ||r[2]<req.body.value){
             console.log("new");
             var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
             var params = [req.body.deviceid,req.body.username,req.body.value];
@@ -61,8 +61,9 @@ app.post('/score', function(req, res){
                     console.log(err);
 
             });
-        } else if(req.body.value>res[2]){
-
+        } else {
+            console.log("no data");
+            console.log(r);
         }
 
     console.log('POST /score');
