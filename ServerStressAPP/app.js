@@ -48,7 +48,7 @@ app.post('/data', function(req, res){
 app.post('/score', function(req, res){
         var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
         var res;
-        client.execute(searchQuery, [req.body.deviceid], function (err, result) {
+        client.execute(searchQuery, [req.data.deviceid], function (err, result) {
             res = result;
             console.log(res);
             // if (!result.isEmpty()){
@@ -65,10 +65,7 @@ app.post('/score', function(req, res){
         if (res){
             console.log("new");
             var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
-            console.log(req.body.deviceid);
-            console.log(req.body.username);
-            console.log(req.body.score);
-            var params = [req.body.deviceid,req.body.username,req.body.score];
+            var params = [req.data.deviceid,req.data.username,req.data.score];
             client.execute(query, params, { prepare: true }, function (err) {
                     console.log(err);
 
