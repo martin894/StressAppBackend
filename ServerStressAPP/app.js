@@ -47,8 +47,9 @@ app.post('/data', function(req, res){
 
 app.post('/score', function(req, res){
         var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
+        var res;
         client.execute(searchQuery, [req.body.deviceid], function (err, result) {
-            console.log(result);
+            res = result;
             // if (!result.isEmpty()){
             //     if(req.body.score>result)
             // } else {
@@ -60,6 +61,14 @@ app.post('/score', function(req, res){
             //     });
             // }
          });
+        if (res ==="undefined"){
+            var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
+            var params = [req.body.deviceid,req.body.username,req.body.score];
+            client.execute(query, params, { prepare: true }, function (err) {
+                    console.log(err);
+
+            });
+        }
 
     console.log('POST /score');
     res.writeHead(200, {'Content-Type': 'text/html'});
