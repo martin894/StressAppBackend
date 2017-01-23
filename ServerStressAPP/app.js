@@ -65,6 +65,7 @@ app.post('/score', function(req, res){
         if (res){
             console.log("new");
             var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
+            console.log(req.body.deviceid);
             var params = [req.body.deviceid,req.body.username,req.body.score];
             client.execute(query, params, { prepare: true }, function (err) {
                     console.log(err);
