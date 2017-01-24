@@ -81,7 +81,7 @@ app.post('/score', function (req, res) {
             r = result.rows[0];
         }
         console.log(r);
-        console.log(parseInt(r.value.split(":")[1]));
+        console.log(parseInt(r.value));
         console.log(req.body.value);
         if (r === null) {
             console.log("new");
@@ -91,7 +91,7 @@ app.post('/score', function (req, res) {
                 console.log(err);
 
             });
-        } else if (parseInt(r.value.split(":")[1]) < req.body.value) {
+        } else if (parseInt(r.value) < req.body.value) {
             console.log("test");
             var query2 = 'DELETE FROM score WHERE deviceid=?';
             var params2 = [req.body.deviceid];
