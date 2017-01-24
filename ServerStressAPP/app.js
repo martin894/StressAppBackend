@@ -90,7 +90,7 @@ app.post('/score', function (req, res) {
                 console.log(err);
 
             });
-        } else if ((r != null) && (r.value < req.body.value)) {
+        } else if (r.value < req.body.value) {
             console.log("test");
             var query2 = 'DELETE FROM score WHERE deviceid=?';
             var params2 = [req.body.deviceid];
