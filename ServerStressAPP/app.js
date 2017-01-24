@@ -22,10 +22,12 @@ app.get('/scores', function (req, res) {
         const query = 'SELECT username,value FROM score';
         client.execute(query, function (err, result) {
                 var temp = [];
+                console.log(result.rows);
                 if (temp.length >= top) {
                     top = temp.length;
                 }
                 var temp = result.rows.slice(0, top);
+                console.log(temp);
                 for (var i = 0; i < 10; i++) {
                     score.push(temp[i].value);
                     user.push(temp[i].username);
