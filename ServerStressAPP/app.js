@@ -28,7 +28,7 @@ app.get('/scores', function (req, res) {
                 }
                 var temp = result.rows.slice(0, top);
                 console.log(temp);
-                for (var i = 0; i < 10; i++) {
+                for (var i = 0; i < temp.length; i++) {
                     score.push(temp[i].value);
                     user.push(temp[i].username);
                 }
