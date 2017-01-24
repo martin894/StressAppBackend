@@ -78,7 +78,7 @@ app.post('/score', function (req, res) {
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
         var r = null;
         console.log(result);
-        if(result.rows.length>0) {
+        if (result.rows.length > 0) {
             r = result.rows[0];
         }
         if (r === null) {
@@ -90,12 +90,18 @@ app.post('/score', function (req, res) {
 
             });
         } else if (r != null && r.value < req.body.value) {
-            var query2 = 'UPDATE score SET value = ? WHERE deviceid=?';
-            var params2 = [req.body.value, req.body.deviceid];
+            var query2 = 'DELETE FROM score WHERE deviceid=?';
+            var params2 = [req.body.deviceid];
             client.execute(query2, params2, {prepare: true}, function (err) {
                 console.log(err);
+                var query4 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
+                var params4 = [req.body.deviceid, req.body.username, req.body.value];
+                client.execute(query4, params4, {prepare: true}, function (err) {
+                    console.log(err);
+
+                });
+                console.log("data updated");
             });
-            console.log("data updated");
         } else {
         }
         console.log('POST /score');
