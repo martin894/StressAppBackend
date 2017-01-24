@@ -57,6 +57,7 @@ app.post('/score', function (req, res) {
     var r = null;
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
         r = result.rows[0];
+        console.log(err);
         console.log("V " + r.value);
     });
     if (r === null) {
