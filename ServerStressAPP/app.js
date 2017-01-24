@@ -78,10 +78,9 @@ app.post('/score', function (req, res) {
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
         var r = null;
         console.log(result);
-        if(result.columns.length>0) {
-            r = result.columns[0];
+        if(result.rows.length>0) {
+            r = result.rows[0];
         }
-        console.log(r);
         if (result === null) {
             console.log("new");
             var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
