@@ -104,8 +104,7 @@ app.post('/score', function (req, res) {
                 console.log("data updated");
             });
         } else {
-        }.
-        console.log('POST /score');
+        }
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end('Successful');
     });
