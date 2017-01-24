@@ -86,7 +86,7 @@ app.post('/score', function (req, res) {
                 console.log(err);
 
             });
-        } else if (r.value < req.body.value) {
+        } else if (r != null && r.value < req.body.value) {
             console.log("new value " + r.value);
             var query2 = 'UPDATE score SET value = ? WHERE deviceid=?';
             var params2 = [req.body.value, req.body.deviceid];
