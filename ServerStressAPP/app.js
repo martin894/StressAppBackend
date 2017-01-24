@@ -59,28 +59,30 @@ app.post('/score', function (req, res) {
         r = result.rows[0];
         console.log(err);
         console.log("V " + r.value);
-    });
-    if (r === null) {
-        console.log("new");
-        var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
-        var params3 = [req.body.deviceid, req.body.username, req.body.value];
-        client.execute(query3, params3, {prepare: true}, function (err) {
-            console.log(err);
+        if (r === null) {
+            console.log("new");
+            var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
+            var params3 = [req.body.deviceid, req.body.username, req.body.value];
+            client.execute(query3, params3, {prepare: true}, function (err) {
+                console.log(err);
 
-        });
-    } else if (r.value < req.body.value) {
-        console.log("new value " + r.value);
-        var query2 = 'UPDATE score SET value = ? WHERE deviceid=?';
-        var params2 = [req.body.value, req.body.deviceid];
-        client.execute(query2, params2, {prepare: true}, function (err) {
-            console.log(err);
-        });
-        console.log("data updated");
-    } else {
-    }
-    console.log('POST /score');
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('Successful');
+            });
+        } else if (r.value < req.body.value) {
+            console.log("new value " + r.value);
+            var query2 = 'UPDATE score SET value = ? WHERE deviceid=?';
+            var params2 = [req.body.value, req.body.deviceid];
+            client.execute(query2, params2, {prepare: true}, function (err) {
+                console.log(err);
+            });
+            console.log("data updated");
+        } else {
+        }
+        console.log('POST /score');
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end('Successful');
+    });
+
+
 });
 
 
