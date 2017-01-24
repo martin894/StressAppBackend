@@ -11,7 +11,7 @@ client.connect(function (err) {
 app.use(bodyParser());
 
 
-app.get('/score', function (req, res) {
+app.get('/scores', function (req, res) {
     console.log('GET /');
     var top = req.query.top;
     var score = [];
@@ -23,11 +23,12 @@ app.get('/score', function (req, res) {
         client.execute(query, function (err, result) {
                 var temp = [];
                 if (temp.length >= top) {
-                    var temp = result.rows.slice(0, top);
-                    for (var i = 0; i < 10; i++) {
-                        score.push(temp[i].value);
-                        user.push(temp[i].username);
-                    }
+                    top = temp.length;
+                }
+                var temp = result.rows.slice(0, top);
+                for (var i = 0; i < 10; i++) {
+                    score.push(temp[i].value);
+                    user.push(temp[i].username);
                 }
                 var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
                 client.execute(searchQuery, [req.query.deviceid], function (err, result) {
