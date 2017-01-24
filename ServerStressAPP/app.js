@@ -90,6 +90,7 @@ app.post('/score', function (req, res) {
 
             });
         } else if (r != null && r.value < req.body.value) {
+            console.log("test");
             var query2 = 'DELETE FROM score WHERE deviceid=?';
             var params2 = [req.body.deviceid];
             client.execute(query2, params2, {prepare: true}, function (err) {
@@ -103,7 +104,7 @@ app.post('/score', function (req, res) {
                 console.log("data updated");
             });
         } else {
-        }
+        }.
         console.log('POST /score');
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end('Successful');
