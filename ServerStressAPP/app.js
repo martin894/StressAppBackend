@@ -14,25 +14,46 @@ app.use(bodyParser());
 app.get('/score', function (req, res) {
     console.log('GET /');
     var top = req.query.top;
-    // if (top) {
-    //     const query = 'SELECT user,value FROM score';
-    //     client.execute(query, function (err, result) {
-    //             score = result.rows.slice(0, 9);
-    //
-    //     });
-    //     var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
-    //     client.execute(searchQuery, [req.query.deviceid], function (err, result) {
-    //         score.push(result[2]);
-    //     });
-    //     res.send(score);
-    //     console.log('Data send');
-    // } else {
-    //     res.send(score);
-    // }
-    var score = {scores:[9,8,7,6,5,4,2,1,0], userscore:5, placement:2};
+    var score = [];
+    var user = [];
+    var highscore = 0;
+    var placementvalue = 0;
+    if (top) {
+        const query = 'SELECT username,value FROM score';
+        client.execute(query, function (err, result) {
+                var temp = [];
+                if (temp.length >= top) {
+                    var temp = result.rows.slice(0, top);
+                    for (var i = 0; i < 10; i++) {
+                        score.push(temp[i].value);
+                        user.push(temp[i].username);
+                    }
+                }
+                var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
+                client.execute(searchQuery, [req.query.deviceid], function (err, result) {
+                    if (result.rows[0] != null) {
+                        for (var z = 0; z < temp.length; z++) {
+                            if (temp[z].username === result.rows[0].username) {
+                                placementvalue = z;
+                            }
+                        }
+                        highscore = result.rows[0].value;
+                        var table = {users: user, scores: score, userscore: highscore, placement: placementvalue}
+                        res.send(table);
+                    } else {
+                        var table = {users: user, scores: score, userscore: highscore, placement: placementvalue}
+                        res.send(table);
+                    }
+                });
 
-    res.send(score);
-});
+            }
+        );
+
+    } else {
+        res.send(score);
+    }
+})
+;
 
 app.post('/data', function (req, res) {
     var key = uuid.v4();
@@ -54,7 +75,6 @@ app.post('/score', function (req, res) {
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
         r = result.rows[0];
         console.log(err);
-        console.log("V " + r.value);
         if (r.deviceid === null) {
             console.log("new");
             var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
