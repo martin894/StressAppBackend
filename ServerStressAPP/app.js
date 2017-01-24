@@ -10,32 +10,28 @@ client.connect(function (err) {
 });
 app.use(bodyParser());
 
-function sortNumber(a, b) {
-    return a - b;
-}
-
 
 app.get('/score', function (req, res) {
     console.log('GET /');
     var top = req.query.top;
-    var score = [];
-    if (top) {
-        const query = 'SELECT user,value FROM score';
-        client.execute(query, function (err, result) {
-            console.log("data " + result);
-            if (score) {
-                score = result.sort(sortNumber).slice(0, 9);
-            }
-        });
-        var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
-        client.execute(searchQuery, [req.query.deviceid], function (err, result) {
-            score.push(result[2]);
-        });
-        res.send(score);
-        console.log('Data send');
-    } else {
-        res.send(score);
-    }
+    // if (top) {
+    //     const query = 'SELECT user,value FROM score';
+    //     client.execute(query, function (err, result) {
+    //             score = result.rows.slice(0, 9);
+    //
+    //     });
+    //     var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
+    //     client.execute(searchQuery, [req.query.deviceid], function (err, result) {
+    //         score.push(result[2]);
+    //     });
+    //     res.send(score);
+    //     console.log('Data send');
+    // } else {
+    //     res.send(score);
+    // }
+    var score = {scores:[9,8,7,6,5,4,2,1,0], userscore:5, placement:2};
+
+    res.send(score);
 });
 
 app.post('/data', function (req, res) {
@@ -59,7 +55,7 @@ app.post('/score', function (req, res) {
         r = result.rows[0];
         console.log(err);
         console.log("V " + r.value);
-        if (r === null) {
+        if (r.deviceid === null) {
             console.log("new");
             var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
             var params3 = [req.body.deviceid, req.body.username, req.body.value];
