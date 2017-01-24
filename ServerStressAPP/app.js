@@ -77,10 +77,11 @@ app.post('/score', function (req, res) {
 
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
         var r = null;
-        console.log(result);
         if (result.rows.length > 0) {
             r = result.rows[0];
         }
+        console.log(r);
+
         if (r === null) {
             console.log("new");
             var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
@@ -89,7 +90,7 @@ app.post('/score', function (req, res) {
                 console.log(err);
 
             });
-        } else if (r != null && r.value < req.body.value) {
+        } else if ((r != null) && (r.value < req.body.value)) {
             console.log("test");
             var query2 = 'DELETE FROM score WHERE deviceid=?';
             var params2 = [req.body.deviceid];
