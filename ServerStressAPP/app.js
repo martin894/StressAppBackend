@@ -62,9 +62,9 @@ app.post('/score', function (req, res) {
     });
     if (r === null) {
         console.log("new");
-        var query = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
-        var params = [req.body.deviceid, req.body.username, req.body.value];
-        client.execute(query, params, {prepare: true}, function (err) {
+        var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
+        var params3 = [req.body.deviceid, req.body.username, req.body.value];
+        client.execute(query3, params3, {prepare: true}, function (err) {
             console.log(err);
 
         });
