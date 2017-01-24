@@ -22,7 +22,10 @@ app.get('/score', function (req, res) {
     if (top) {
         const query = 'SELECT user,value FROM score';
         client.execute(query, function (err, result) {
-            score = result.sort(sortNumber).slice(0, 9);
+            console.log("data " + result);
+            if (score) {
+                score = result.sort(sortNumber).slice(0, 9);
+            }
         });
         var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
         client.execute(searchQuery, [req.query.deviceid], function (err, result) {
@@ -67,9 +70,9 @@ app.post('/score', function (req, res) {
         });
     } else if (r[2] < req.body.value) {
         console.log("new value " + r[2]);
-        const query = 'UPDATE score SET value = ? WHERE deviceid=?';
-        const params = [req.body.value, req.body.deviceid];
-        client.execute(query, params, {prepare: true}, function (err) {
+        var query2 = 'UPDATE score SET value = ? WHERE deviceid=?';
+        var params2 = [req.body.value, req.body.deviceid];
+        client.execute(query2, params2, {prepare: true}, function (err) {
             console.log(err);
         });
         console.log("data updated");
