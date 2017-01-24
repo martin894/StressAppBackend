@@ -11,7 +11,7 @@ client.connect(function (err) {
 app.use(bodyParser());
 
 
-app.get('/scores', function (req, res) {
+app.get('/score', function (req, res) {
     console.log('GET /');
     var top = req.query.top;
     var score = [];
@@ -76,10 +76,7 @@ app.post('/score', function (req, res) {
     var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
     var r = null;
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
-        console.log(result);
-        r = result.rows[0];
-        console.log(r);
-        console.log(err);
+        r = result.columns[0];
         if (result === null) {
             console.log("new");
             var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
@@ -89,7 +86,6 @@ app.post('/score', function (req, res) {
 
             });
         } else if (r != null && r.value < req.body.value) {
-            console.log("new value " + r.value);
             var query2 = 'UPDATE score SET value = ? WHERE deviceid=?';
             var params2 = [req.body.value, req.body.deviceid];
             client.execute(query2, params2, {prepare: true}, function (err) {
