@@ -56,9 +56,8 @@ app.post('/score', function (req, res) {
     var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
     var r = null;
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
-        r = result;
-        console.log(r);
-
+        r = result.first();
+        console.log("V " + r.value);
     });
     if (r === null) {
         console.log("new");
