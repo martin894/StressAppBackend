@@ -56,7 +56,7 @@ app.post('/score', function (req, res) {
     var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
     var r = null;
     client.execute(searchQuery, [req.body.deviceid], function (err, result) {
-        r = result.first();
+        r = result.rows[0];
         console.log("V " + r.value);
     });
     if (r === null) {
@@ -67,8 +67,8 @@ app.post('/score', function (req, res) {
             console.log(err);
 
         });
-    } else if (r[2] < req.body.value) {
-        console.log("new value " + r[2]);
+    } else if (r.value < req.body.value) {
+        console.log("new value " + r.value);
         var query2 = 'UPDATE score SET value = ? WHERE deviceid=?';
         var params2 = [req.body.value, req.body.deviceid];
         client.execute(query2, params2, {prepare: true}, function (err) {
@@ -76,8 +76,6 @@ app.post('/score', function (req, res) {
         });
         console.log("data updated");
     } else {
-        console.log("no data");
-        console.log(r);
     }
     console.log('POST /score');
     res.writeHead(200, {'Content-Type': 'text/html'});
