@@ -81,7 +81,7 @@ app.post('/score', function (req, res) {
             r = result.rows[0];
         }
         console.log(r);
-        console.log(r.value);
+        console.log(r.value.long);
         console.log(req.body.value);
         if (r === null) {
             console.log("new");
