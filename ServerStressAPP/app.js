@@ -19,7 +19,7 @@ app.get('/scores', function (req, res) {
     var highscore = 0;
     var placementvalue = 0;
     if (top) {
-        const query = 'SELECT username,value FROM score';
+        const query = 'SELECT username,value,deviceid FROM score';
         client.execute(query, function (err, result) {
                 var temp = [];
                 console.log(result.rows);
@@ -36,12 +36,12 @@ app.get('/scores', function (req, res) {
                 client.execute(searchQuery, [req.query.deviceid], function (err, result) {
                     if (result.rows[0] != null) {
                         for (var z = 0; z < temp.length; z++) {
-                            if (temp[z].username === result.rows[0].username) {
+                            if (temp[z].deviceid === req.query.deviceid) {
                                 placementvalue = z;
                             }
                         }
                         highscore = result.rows[0].value;
-                        var table = {users: user, scores: score, userscore: highscore, placement: placementvalue}
+                        var table = {users: user, scores: score, userscore: highscore, placement: placementvalue++}
                         res.send(table);
                     } else {
                         var table = {users: user, scores: score, userscore: highscore, placement: placementvalue}
