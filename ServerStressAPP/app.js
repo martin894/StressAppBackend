@@ -2,113 +2,106 @@ var express = require('express');
 var fs = require('fs');
 var app = express();
 var bodyParser = require('body-parser');
-var uuid = require('node-uuid');
-const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({contactPoints: ['127.0.0.1:9042'], keyspace: 'eventskeyspace'});
-client.connect(function (err) {
-    console.log(err);
-});
+var MongoClient = require('mongodb').MongoClient
+    , assert = require('assert');
+
+var url = 'mongodb://localhost:27017/db';
+
+
 app.use(bodyParser());
 
 
 app.get('/score', function (req, res) {
-    console.log('GET /');
+    console.log('GET /score');
     var top = req.query.top;
     var score = [];
     var user = [];
     var highscore = 0;
     var placementvalue = 0;
     if (top) {
-        const query = 'SELECT username,value,deviceid FROM score';
-        client.execute(query, function (err, result) {
-                var temp = [];
-                console.log(result.rows);
-                if (temp.length >= top) {
-                    top = temp.length;
+        MongoClient.connect(url, function (err, db) {
+            assert.equal(null, err);
+            var collection = db.collection('data');
+            collection.find({}, {"sort": [['value', 'desc']]}).toArray(function (err, docs) {
+                assert.equal(null, err);
+                console.log(docs);
+                if (top > docs.length) {
+                    top = docs.length;
                 }
-                var temp = result.rows.slice(0, top);
-                console.log(temp);
-                for (var i = 0; i < temp.length; i++) {
-                    score.push(temp[i].value);
-                    user.push(temp[i].username);
-                }
-                var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
-                client.execute(searchQuery, [req.query.deviceid], function (err, result) {
-                    if (result.rows[0] != null) {
-                        for (var z = 0; z < temp.length; z++) {
-                            if (temp[z].deviceid === req.query.deviceid) {
-                                placementvalue = z;
-                            }
-                        }
-                        highscore = result.rows[0].value;
-                        var table = {users: user, scores: score, userscore: highscore, placement: placementvalue++}
-                        res.send(table);
-                    } else {
-                        var table = {users: user, scores: score, userscore: highscore, placement: placementvalue}
-                        res.send(table);
-                    }
-                });
-
-            }
-        );
-
+                //var table = {users: user, scores: score, userscore: highscore, placement: placementvalue++}
+                //res.send(table);
+                db.close();
+                res.send([]);
+            });
+        });
     } else {
-        res.send(score);
+        res.send([]);
     }
+
 })
 ;
 
-app.post('/data', function (req, res) {
-    var key = uuid.v4();
-    var query = 'INSERT INTO events JSON ?';
-    var params = [req.body.data];
-    client.execute(query, params, {prepare: true}, function (err) {
-        console.log(err);
-
+app.post('/event', function (req, res) {
+    console.log('POST /event');
+    MongoClient.connect(url, function (err, db) {
+        assert.equal(null, err);
+        var collection = db.collection('data');
+        collection.insert([req.body.data], function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Inserted userdata");
+            }
+            db.close();
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end('Successful');
+        });
     });
-    console.log('POST /data');
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('Successful');
 });
 
 app.post('/score', function (req, res) {
     console.log('POST /score');
-    var searchQuery = 'SELECT deviceid,value,username FROM score WHERE deviceid =?';
-
-    client.execute(searchQuery, [req.body.deviceid], function (err, result) {
-        var r = null;
-        if (result.rows.length > 0) {
-            r = result.rows[0];
-        }
-        if (r === null) {
-            console.log("new");
-            var query3 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
-            var params3 = [req.body.deviceid, req.body.username, req.body.value];
-            client.execute(query3, params3, {prepare: true}, function (err) {
-                console.log(err);
-
-            });
-        } else if (parseInt(r.value) < req.body.value) {
-            console.log("test");
-            var query2 = 'DELETE FROM score WHERE deviceid=?';
-            var params2 = [req.body.deviceid];
-            client.execute(query2, params2, {prepare: true}, function (err) {
-                console.log(err);
-                var query4 = 'INSERT INTO score (deviceid,username,value) VALUES (?,?,?)';
-                var params4 = [req.body.deviceid, req.body.username, req.body.value];
-                client.execute(query4, params4, {prepare: true}, function (err) {
-                    console.log(err);
-
+    MongoClient.connect(url, function (err, db) {
+        assert.equal(null, err);
+        var collection = db.collection('score');
+        collection.find({value: req.body.value, deviceid: req.body.deviceid}).toArray(function (err, results) {
+            if (results.length > 0) {
+                collection.insert([req.body.data], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                    }
+                    db.close();
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.end('Successful');
                 });
-                console.log("data updated");
-            });
-        } else {
-        }
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end('Successful');
+            } else {
+                db.close();
+                console.log("No score inserted because same value already exist");
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.end('Successful');
+            }
+        });
+
     });
+});
 
-
+app.post('/survey', function (req, res) {
+    console.log('POST /survey');
+    MongoClient.connect(url, function (err, db) {
+        assert.equal(null, err);
+        var collection = db.collection('survey');
+        collection.insert([req.body.data], function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Inserted surveydata");
+            }
+            db.close();
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end('Successful');
+        });
+    });
 });
 
 
