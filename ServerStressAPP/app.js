@@ -45,7 +45,7 @@ app.post('/event', function (req, res) {
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err);
         var collection = db.collection('event');
-        collection.insert([req.body.data], function (err, result) {
+        collection.insert([JSON.parse(req.body.data)], function (err, result) {
             if (err) {
                 console.log(err);
             } else {
