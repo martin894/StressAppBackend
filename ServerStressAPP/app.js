@@ -87,7 +87,7 @@ app.post('/score', function (req, res) {
             } else {
                 console.log(results[0]);
                 if (results[0].value < req.body.value) {
-                    collection.update({_id: results[0]._id}, {$set: {author: "Jessica"}}, function (err, result) {
+                    collection.update({_id: results[0]._id}, function (err, result) {
                         if (err) {
                             console.log(err);
                         } else {
