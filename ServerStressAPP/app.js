@@ -33,7 +33,7 @@ app.get('/score', function (req, res) {
                 }
                 for (var z = 0; z < docs.length; z++) {
                     if (docs[z].deviceid === req.query.deviceid) {
-                        placementvalue = z + 1;
+                        placementvalue = z;
                         highscore = docs[z].value;
                     }
                 }
