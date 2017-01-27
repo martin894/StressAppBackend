@@ -64,7 +64,7 @@ app.post('/score', function (req, res) {
         assert.equal(null, err);
         var collection = db.collection('score');
         collection.find({value: req.body.value, deviceid: req.body.deviceid}).toArray(function (err, results) {
-            if (results.length > 0) {
+            if (results.length === 0) {
                 collection.insert([req.body.data], function (err, result) {
                     if (err) {
                         console.log(err);
