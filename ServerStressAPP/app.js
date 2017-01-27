@@ -27,10 +27,19 @@ app.get('/score', function (req, res) {
                 if (top > docs.length) {
                     top = docs.length;
                 }
-                //var table = {users: user, scores: score, userscore: highscore, placement: placementvalue++}
-                //res.send(table);
+                for (var i = 0; i < top; i++) {
+                    score.push(docs[i].value);
+                    users.push(docs[i].username);
+                }
+                for (var z = 0; z < docs.length; z++) {
+                    if (docs[z].deviceid === req.query.deviceid) {
+                        placementvalue = z + 1;
+                        highscore = docs[z].value;
+                    }
+                }
+                var table = {users: user, scores: score, userscore: highscore, placement: placementvalue++}
                 db.close();
-                res.send([]);
+                res.send(table);
             });
         });
     } else {
