@@ -72,6 +72,7 @@ app.post('/score', function (req, res) {
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err);
         var collection = db.collection('score');
+        console.log(req.body.data);
         console.log(req.body.deviceid);
         collection.find({deviceid: req.body.deviceid}).toArray(function (err, results) {
             console.log(results);
