@@ -20,7 +20,7 @@ app.get('/score', function (req, res) {
     if (top) {
         MongoClient.connect(url, function (err, db) {
             assert.equal(null, err);
-            var collection = db.collection('data');
+            var collection = db.collection('score');
             collection.find({}, {"sort": [['value', 'desc']]}).toArray(function (err, docs) {
                 assert.equal(null, err);
                 console.log(docs);
@@ -44,7 +44,7 @@ app.post('/event', function (req, res) {
     console.log('POST /event');
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err);
-        var collection = db.collection('data');
+        var collection = db.collection('event');
         collection.insert([req.body.data], function (err, result) {
             if (err) {
                 console.log(err);
