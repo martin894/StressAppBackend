@@ -29,7 +29,7 @@ app.get('/score', function (req, res) {
                 }
                 for (var i = 0; i < top; i++) {
                     score.push(docs[i].value);
-                    users.push(docs[i].username);
+                    user.push(docs[i].username);
                 }
                 for (var z = 0; z < docs.length; z++) {
                     if (docs[z].deviceid === req.query.deviceid) {
@@ -72,15 +72,13 @@ app.post('/score', function (req, res) {
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err);
         var collection = db.collection('score');
-        console.log(req.body.data);
-        console.log(JSON.parse(req.body.data).deviceid);
         collection.find({deviceid: JSON.parse(req.body.data).deviceid}).toArray(function (err, results) {
-            console.log(results);
             if (results.length === 0) {
                 collection.insert([JSON.parse(req.body.data)], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
+                        console.log("score inserted");
                     }
                     db.close();
                     res.writeHead(200, {'Content-Type': 'text/html'});
