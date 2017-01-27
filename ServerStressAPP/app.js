@@ -9,7 +9,8 @@ var url = 'mongodb://localhost:27017/db';
 
 
 app.use(bodyParser());
-
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
 
 app.get('/score', function (req, res) {
     console.log('GET /score');
@@ -46,7 +47,7 @@ app.post('/event', function (req, res) {
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err);
         var collection = db.collection('data');
-        collection.insert([JSON.stringify(req.body.data)], function (err, result) {
+        collection.insert([req.body.data], function (err, result) {
             if (err) {
                 console.log(err);
             } else {
