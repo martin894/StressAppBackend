@@ -72,8 +72,9 @@ app.post('/score', function (req, res) {
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err);
         var collection = db.collection('score');
-        console.log(req.body.data.deviceid);
-        collection.find({deviceid: req.body.data.deviceid}).toArray(function (err, results) {
+        console.log(req.body.data);
+        console.log(JSON.parse(req.body.data).deviceid);
+        collection.find({deviceid: JSON.parse(req.body.data).deviceid}).toArray(function (err, results) {
             console.log(results);
             if (results.length === 0) {
                 collection.insert([JSON.parse(req.body.data)], function (err, result) {
@@ -87,8 +88,8 @@ app.post('/score', function (req, res) {
                 });
             } else {
                 console.log(results[0]);
-                if (results[0].value < req.body.data.value) {
-                    collection.update({_id: results[0]._id}, {$set: {value: req.body.data.value}}, function (err, result) {
+                if (results[0].value < JSON.parse(req.body.data).value) {
+                    collection.update({_id: results[0]._id}, {$set: {value: JSON.parse(req.body.data).value}}, function (err, result) {
                         if (err) {
                             console.log(err);
                         } else {
