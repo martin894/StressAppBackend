@@ -7,10 +7,8 @@ var MongoClient = require('mongodb').MongoClient
 
 var url = 'mongodb://localhost:27017/db';
 
-
-app.use(bodyParser());
-app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/score', function (req, res) {
     console.log('GET /score');
