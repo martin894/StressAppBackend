@@ -15,6 +15,7 @@ app.get('/score', function (req, res) {
     var top = req.query.top;
     var score = [];
     var user = [];
+    var ids = [];
     var highscore = 0;
     var placementvalue = 0;
     if (top) {
@@ -30,6 +31,7 @@ app.get('/score', function (req, res) {
                 for (var i = 0; i < top; i++) {
                     score.push(docs[i].value);
                     user.push(docs[i].username);
+                    ids.push(docs[i].deviceid);
                 }
                 for (var z = 0; z < docs.length; z++) {
                     if (docs[z].deviceid === req.query.deviceid) {
@@ -37,7 +39,7 @@ app.get('/score', function (req, res) {
                         highscore = docs[z].value;
                     }
                 }
-                var table = {users: user, scores: score, userscore: highscore, placement: placementvalue++}
+                var table = {users: user, scores: score, userscore: highscore, userids:ids, placement: placementvalue++};
                 db.close();
                 res.send(table);
             });
@@ -114,7 +116,7 @@ app.post('/survey', function (req, res) {
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err);
         var collection = db.collection('survey');
-        collection.insert([req.body.data], function (err, result) {
+        collection.insert([JSON.parse(req.body.data)], function (err, result) {
             if (err) {
                 console.log(err);
             } else {
