@@ -129,5 +129,23 @@ app.post('/survey', function (req, res) {
     });
 });
 
+app.post('/stresslevel', function (req, res) {
+    console.log('POST /stresslevel');
+    MongoClient.connect(url, function (err, db) {
+        assert.equal(null, err);
+        var collection = db.collection('stresslevel');
+        collection.insert([JSON.parse(req.body.data)], function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Inserted stresslevelvalue");
+            }
+            db.close();
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end('Successful');
+        });
+    });
+});
+
 
 app.listen(3000);
