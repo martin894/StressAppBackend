@@ -60,6 +60,7 @@ app.post('/event', function (req, res) {
         var collection = db.collection('event');
         collection.insert([JSON.parse(req.body.data)], function (err, result) {
             if (err) {
+                console.log(req.body.data);
                 console.log(err);
             } else {
                 console.log("Inserted userdata");
