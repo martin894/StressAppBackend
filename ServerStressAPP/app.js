@@ -34,7 +34,7 @@ app.get('/score', function (req, res) {
                     ids.push(docs[i].deviceid);
                 }
                 for (var z = 0; z < docs.length; z++) {
-                    if ((docs[z].deviceid === req.query.deviceid) && (docs[z].username ==req.query.username)) {
+                    if ((docs[z].deviceid === req.query.deviceid) && (docs[z].username ===req.query.username)) {
                         placementvalue = z;
                         if (docs[z].value) {
                             highscore = docs[z].value;
