@@ -38,7 +38,7 @@ app.get('/score', function (req, res) {
                     if ((docs[z].deviceid === req.query.deviceid) && (docs[z].username ===req.query.username)) {
                         placementvalue = z;
                         highscore = docs[z].value;
-                        console.log("highest score: " + docs[z].value;
+                        console.log("highest score: " + docs[z].value);
                         break;
                     }
                 }
