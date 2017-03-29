@@ -93,12 +93,28 @@ app.post('/score', function (req, res) {
                 });
             } else {
                 var uResult = results[0];
+                var exist = false;
                 for (var i = 0; i < results.length; i++) {
                     if (results[i].username === JSON.parse(req.body.data).username) {
                       uResult = results[i];  
+                      exist = true;
+                      break;
                     }
                 }
-                if (uResult.value < JSON.parse(req.body.data).value) {
+                if (!exist) {
+                    collection.insert([JSON.parse(req.body.data)], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log("score inserted");
+                        }
+                        db.close();
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        res.end('Successful');
+                    });
+                   
+                }
+                else if (uResult.value < JSON.parse(req.body.data).value) {
                     collection.update({_id: uResult._id}, {$set: {value: JSON.parse(req.body.data).value}}, function (err, result) {
                         if (err) {
                             console.log(err);
